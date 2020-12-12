@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Home Page</h2>
+    <div id="tweets">
+
+    </div>
+
+    <script>
+        const listOfTweets = []
+        const xhr = new XMLHttpRequest()
+        const method = "GET"
+        const url = "/tweets"
+        const responseType = "json"
+
+        xhr.responseType = responseType
+        xhr.open(method, url)
+        
+        xhr.onload = () => {
+            const serverResponse = xhr.response
+            const tweets = serverResponse.response
+            
+            for (const tweet of tweets) {
+                const tweetDiv = document.querySelector("#tweets") 
+                console.log(tweet)
+                console.log(tweetDiv)
+                const tweetCont = document.createElement('div')
+                tweetCont.id = `tweet-${tweet.id}`
+                const h3Elem = document.createElement('h3')
+                h3Elem.textContent = tweet.content
+                // const content = document.createTextNode(tweet.content)
+                console.log(h3Elem)
+                tweetCont.appendChild(h3Elem)
+                tweetDiv.appendChild(tweetCont)
+                 
+            }
+        }
+        xhr.send()
+        const elem = document.createElement("h3")
+        console.log(elem);
+
+        // // console.log(listOfTweets);
+        // const tweetDiv = document.querySelector("#tweets")    
+
+        // for (const item of listOfTweets) {
+        //     console.log(item);
+        //     // const h3Elem = document.createElement("h3")
+        //     // h3Elem.textContent = item.textContent
+        //     // tweetDiv.appendChild(h3Elem)
+        //     // console.log(tweetDiv)     
+        // }
+
+
+    </script>
+{% endblock %}

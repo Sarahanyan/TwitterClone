@@ -5,21 +5,23 @@ from .models import Tweet
 
 
 def home_view(request):
-    return HttpResponse("<h1>Hello World</h1>")
+    return render(request, "home.html", {})
 
 
 def tweets_list_view(request):
-    tweets_list = {}
+    tweets_list = []
     tweets = Tweet.objects.all()
     for tweet in tweets:
-        data = {
+        single_tweet = {
             "id": tweet.id,
             "content": tweet.content
         }
-        tweets_list[tweet.id] = data
+        tweets_list.append(single_tweet)
         print(tweets_list)
-
-    return JsonResponse(tweets_list)
+    data = {
+        "response": tweets_list
+    }
+    return JsonResponse(data)
 
 
 def tweets_detail_view(request, tweet_id, *args, **kwargs):
