@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, JsonResponse
+from random import randint
 
 from .models import Tweet
 
@@ -14,7 +15,8 @@ def tweets_list_view(request):
     for tweet in tweets:
         single_tweet = {
             "id": tweet.id,
-            "content": tweet.content
+            "content": tweet.content,
+            "likes": randint(0, 1000)
         }
         tweets_list.append(single_tweet)
         print(tweets_list)

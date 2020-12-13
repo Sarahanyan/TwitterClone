@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Home Page</h2>
-    <div id="tweets">
+    <div class="container text-center mt-3" style="background: #ebf5ff;">
+        
+        <div id="tweets">
 
+        </div>  
     </div>
 
     <script>
@@ -22,34 +24,32 @@
             
             for (const tweet of tweets) {
                 const tweetDiv = document.querySelector("#tweets") 
-                console.log(tweet)
-                console.log(tweetDiv)
+
                 const tweetCont = document.createElement('div')
+                tweetCont.classList.add("py-4", "border-bottom")
                 tweetCont.id = `tweet-${tweet.id}`
+
                 const h3Elem = document.createElement('h3')
                 h3Elem.textContent = tweet.content
-                // const content = document.createTextNode(tweet.content)
-                console.log(h3Elem)
+
+                const likeBtn = document.createElement("button")
+                likeBtn.textContent = tweet.likes + " likes"
+                likeBtn.classList.add("btn", "btn-primary")
+
                 tweetCont.appendChild(h3Elem)
                 tweetDiv.appendChild(tweetCont)
+                tweetCont.appendChild(likeBtn)
+
+                likeBtn.addEventListener("click", () => {
+                    tweet.likes++
+                    likeBtn.textContent = tweet.likes + " likes"
+                })
                  
             }
         }
         xhr.send()
         const elem = document.createElement("h3")
         console.log(elem);
-
-        // // console.log(listOfTweets);
-        // const tweetDiv = document.querySelector("#tweets")    
-
-        // for (const item of listOfTweets) {
-        //     console.log(item);
-        //     // const h3Elem = document.createElement("h3")
-        //     // h3Elem.textContent = item.textContent
-        //     // tweetDiv.appendChild(h3Elem)
-        //     // console.log(tweetDiv)     
-        // }
-
 
     </script>
 {% endblock %}
