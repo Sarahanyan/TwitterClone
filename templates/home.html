@@ -2,10 +2,10 @@
 
 {% block content %}
     <div class="container text-center mt-3" style="background: #ebf5ff;">
-        <form action="/create-tweet" method="POST" class="p-5 border-bottom">
+        <form id="tweetform" action="/create-tweet" method="POST" class="p-5 border-bottom">
             {% csrf_token %}
             <input type="hidden"  name="next" value="/" class="form-control form-control-lg bg-primary"> 
-            <input type="textarea" name="content" placeholder="write your tweet here" class="form-control form-control-lg mb-2">
+            <input type="textarea" name="content" placeholder="write your tweet here"  required="required" class="form-control form-control-lg mb-2">
             <button type="submit" class="btn btn-primary">Tweet</button>
         </form>
         
@@ -15,6 +15,43 @@
     </div>
 
     <script>
+
+        const containerOfTweets = document.querySelector("#tweets")
+        displayTweets(containerOfTweets)
+
+        const handleSubmit = (event) => {
+                event.preventDefault()
+                const form = event.target
+
+                const formData = new FormData(form)
+                // for (const entry of formData.entries()) {
+                //     console.log(entry);
+                // }
+                const method = form.getAttribute("method")
+                const url = form.getAttribute("action") 
+
+                const xhr = new XMLHttpRequest()
+                xhr.responseType = "json"
+
+                xhr.open(method, url)
+                xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
+                xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+                xhr.send(formData)
+                xhr.onload = () => {
+                    const serverResponse = xhr.response
+
+                    if(xhr.status === 201){
+                        const newTweet = createTweetElem(serverResponse)
+                        const tweetContFirstChild = containerOfTweets.children[0]
+                        containerOfTweets.insertBefore(newTweet, tweetContFirstChild)
+                    }
+
+                    form.reset()
+                }
+            }   
+
+        const myForm = document.querySelector("#tweetform")
+        myForm.addEventListener("submit", handleSubmit)
 
         function displayTweets(tweetDiv){
             const listOfTweets = []
@@ -30,33 +67,34 @@
                 const serverResponse = xhr.response
                 const tweets = serverResponse.response
                 
-                for (const tweet of tweets) {
-                    const tweetCont = document.createElement('div')
-                    tweetCont.classList.add("py-4", "border-bottom")
-                    tweetCont.id = `tweet-${tweet.id}`
-
-                    const h3Elem = document.createElement('h3')
-                    h3Elem.textContent = tweet.content
-
-                    const likeBtn = document.createElement("button")
-                    likeBtn.textContent = tweet.likes + " likes"
-                    likeBtn.classList.add("btn", "btn-primary")
-
-                    tweetCont.appendChild(h3Elem)
-                    tweetDiv.appendChild(tweetCont)
-                    tweetCont.appendChild(likeBtn)
-
-                    likeBtn.addEventListener("click", () => {
-                        tweet.likes++
-                        likeBtn.textContent = tweet.likes + " likes"
-                    })
-                    
+                for (const singleTweet of tweets) {
+                    const newTweet = createTweetElem(singleTweet)
+                    containerOfTweets.appendChild(newTweet)
                 }
             }
             xhr.send()
         }
 
-        containerOfTweets = document.querySelector("#tweets")
-        displayTweets(containerOfTweets)
+        function createTweetElem(tweet){
+            const tweetCont = document.createElement('div')
+            tweetCont.classList.add("py-4", "border-bottom")
+            tweetCont.id = `tweet-${tweet.id}`
+
+            const h3Elem = document.createElement('h3')
+            h3Elem.textContent = tweet.content
+
+            const likeBtn = document.createElement("button")
+            likeBtn.textContent = tweet.likes + " likes"
+            likeBtn.classList.add("btn", "btn-primary")
+
+            tweetCont.appendChild(h3Elem)
+            tweetCont.appendChild(likeBtn)
+
+            likeBtn.addEventListener("click", () => {
+                tweet.likes++
+                likeBtn.textContent = tweet.likes + " likes"
+            })
+            return tweetCont
+        }
     </script>
 {% endblock %}

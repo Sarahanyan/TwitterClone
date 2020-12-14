@@ -15,16 +15,8 @@ def home_view(request):
 
 
 def tweets_list_view(request):
-    tweets_list = []
     tweets = Tweet.objects.all()
-    for tweet in tweets:
-        single_tweet = {
-            "id": tweet.id,
-            "content": tweet.content,
-            "likes": randint(0, 1000)
-        }
-        tweets_list.append(single_tweet)
-        # print(tweets_list)
+    tweets_list = [tweet.serialize() for tweet in tweets]
     data = {
         "response": tweets_list
     }
@@ -47,6 +39,11 @@ def create_tweet_view(request):
         print("cleaned data", form.cleaned_data)
         obj = form.save(commit=False)
         obj.save()
+
+        if request.is_ajax():
+            # 201 - item created successfully
+            return JsonResponse(obj.serialize(), status=201)
+
         if next_url != None and is_safe_url(next_url, ALLOWED_HOSTS):
             return redirect(next_url)
         form = TweetForm()
