@@ -52,6 +52,7 @@
                 xhr.send(formData)
                 xhr.onload = () => {
                     const serverResponse = xhr.response
+                    console.log("status" + xhr.status);
 
                     if(xhr.status === 201){
                         const newTweet = createTweetElem(serverResponse)
@@ -71,6 +72,13 @@
                         }
 
                     }
+
+                    else if (xhr.status === 403) {
+                        alert("You need to log in")
+                        window.location.href = "/login"
+
+                    }
+
                     else if(xhr.status === 401){
                         alert("You need to log in")
                         window.location.href = "/login"
@@ -99,7 +107,8 @@
             
             xhr.onload = () => {
                 const serverResponse = xhr.response
-                const tweets = serverResponse.response
+                const tweets = serverResponse
+                // const tweets = serverResponse.response
                 console.log(xhr.status);
                 
                 if (xhr.status === 200){

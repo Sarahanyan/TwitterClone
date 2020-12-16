@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["127.0.0.1"]
 
+TWEET_MAX_LENGTH = 240
 
 # Application definition
 
@@ -38,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # third party
+    "rest_framework",
+
+    # internal
     'tweets'
 ]
 
