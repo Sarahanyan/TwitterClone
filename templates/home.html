@@ -4,6 +4,7 @@
     <div class="container text-center mt-3" style="background: #ebf5ff;">
         <form id="tweetform" action="/create-tweet" method="POST" class="p-5 border-bottom">
             {% csrf_token %}
+            <div id="createTweetError" class="d-none alert alert-danger"></div>
             <input type="hidden"  name="next" value="/" class="form-control form-control-lg bg-primary"> 
             <input type="textarea" name="content" placeholder="write your tweet here"  required="required" class="form-control form-control-lg mb-2">
             <button type="submit" class="btn btn-primary">Tweet</button>
@@ -18,6 +19,18 @@
 
         const containerOfTweets = document.querySelector("#tweets")
         displayTweets(containerOfTweets)
+
+        const handleCreateTweetError = (message, display) => {
+            const createTweetErrorDiv = document.querySelector("#createTweetError")
+            if (display){
+                createTweetErrorDiv.textContent = message
+                createTweetErrorDiv.classList.replace("d-none", "d-block")
+            }
+            else {
+                createTweetErrorDiv.classList.replace("d-block", "d-none")
+            }
+
+        }
 
         const handleSubmit = (event) => {
                 event.preventDefault()
@@ -46,6 +59,22 @@
                         containerOfTweets.insertBefore(newTweet, tweetContFirstChild)
                     }
 
+                    else if (xhr.status === 400) {
+                        const jsonError = xhr.response
+                        console.log(jsonError)
+                        const contentError = jsonError.content
+                        let errorMsg
+
+                        if (contentError){
+                            errorMsg = contentError[0]
+                            handleCreateTweetError(errorMsg, true)
+                        }
+
+                    }
+                    else {
+                        alert("An error occured. please try again")
+                    }
+
                     form.reset()
                 }
             }   
@@ -66,11 +95,18 @@
             xhr.onload = () => {
                 const serverResponse = xhr.response
                 const tweets = serverResponse.response
+                console.log(xhr.status);
                 
-                for (const singleTweet of tweets) {
-                    const newTweet = createTweetElem(singleTweet)
-                    containerOfTweets.appendChild(newTweet)
+                if (xhr.status === 200){
+                    for (const singleTweet of tweets) {
+                        const newTweet = createTweetElem(singleTweet)
+                        containerOfTweets.appendChild(newTweet)
+                    }
                 }
+            }
+
+            xhr.onerror = () => {
+                alert("Sorry, a serious error occured");
             }
             xhr.send()
         }
