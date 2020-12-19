@@ -203,8 +203,12 @@
                 console.log(xhr.status, xhr.response);
                 const tweet = JSON.parse(xhr.response)
                 if (tweetAction === "retweet") {
+                    const newTweet = createTweetElem(tweet) 
+                    const tweetContFirstChild = containerOfTweets.children[0]
+                    containerOfTweets.insertBefore(newTweet, tweetContFirstChild)
                     const actionBtn = document.querySelector(`#retweet-${tweet_id}`)
-                    actionBtn.textContent = tweet.retweets + "retweets" 
+                    actionBtn.textContent = tweet.retweets + "retweets"
+                    
                 }
                 else{
                     console.log(tweet, tweet.likes);

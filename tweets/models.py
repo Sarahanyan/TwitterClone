@@ -15,7 +15,7 @@ class TweetLike(models.Model):
 
 class Tweet(models.Model):
     parent = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
-    content = models.TextField()
+    content = models.TextField(null=True)
     image = models.FileField(upload_to="images/", null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     likes = models.ManyToManyField(
@@ -27,6 +27,10 @@ class Tweet(models.Model):
 
     def __str__(self):
         return self.content
+
+    @property
+    def is_retweet(self):
+        return self.parent != None
 
     def serialize(self):
         return {

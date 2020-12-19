@@ -11,7 +11,7 @@ from rest_framework.authentication import SessionAuthentication
 
 from .models import Tweet
 from .forms import TweetForm
-from .serializers import TweetSerializer, TweetActionSerializer
+from .serializers import TweetCreateSerializer, TweetSerializer, TweetActionSerializer
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
@@ -42,7 +42,7 @@ def tweets_detail_view(request, tweet_id):
 @authentication_classes([SessionAuthentication])
 @permission_classes([IsAuthenticated])
 def create_tweet_view(request, *args, **kwargs):
-    serializer = TweetSerializer(data=request.POST)
+    serializer = TweetCreateSerializer(data=request.POST)
     if serializer.is_valid(raise_exception=True):
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)
@@ -97,9 +97,10 @@ def tweet_action_view(request):
         return Response(serializer.data, status=200)
     elif action == "retweet":
         parent_tweet = obj
-        retweeted_tweet = Tweets.objects.create(
-            parent=parent_tweet, user=request, content=content)
-    return Response({"message": "Tweet liked"}, status=200)
+        retweeted_tweet = Tweet.objects.create(
+            parent=parent_tweet, user=request.user, content=content)
+        serializer = TweetSerializer(retweeted_tweet)
+        return Response(serializer.data, status=200)
 
 
 def tweets_list_view_pure_django(request):
