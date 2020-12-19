@@ -122,9 +122,8 @@
             
             xhr.onload = () => {
                 const serverResponse = xhr.response
-                const tweets = serverResponse
-                // const tweets = serverResponse.response
-                console.log(xhr.status);
+                const tweets = serverResponse  //fetching with django rest framework
+                // const tweets = serverResponse.response  //fetching pure django
                 
                 if (xhr.status === 200){
                     for (const singleTweet of tweets) {
@@ -148,34 +147,73 @@
             const h3Elem = document.createElement('h3')
             h3Elem.textContent = tweet.content
 
-            const likeBtn = document.createElement("button")
-            likeBtn.textContent = tweet.likes + " likes"
-            likeBtn.classList.add("btn", "btn-primary")
+            const likeBtn = createActionBtn(tweet, "like")
+            const unlikeBtn = createActionBtn(tweet, "unlike")
+            const retweetBtn = createActionBtn(tweet, "retweet")
 
             tweetCont.appendChild(h3Elem)
             tweetCont.appendChild(likeBtn)
-
-            likeBtn.addEventListener("click", handleTweetLiked(tweet.id, tweet.likes))
+            tweetCont.appendChild(unlikeBtn)
+            tweetCont.appendChild(retweetBtn)
+            
             return tweetCont
         }
 
-        function handleTweetLiked(tweet_id, currentCount){
+        function createActionBtn(tweet, action){ 
+            const txtInBtn = { 
+                like : `${tweet.likes} likes`, 
+                unlike : "unlike", 
+                retweet : `${tweet.retweets} retweets`
+            }
+
+            const btnClasses =  { 
+                like: ["btn", "btn-primary"],
+                unlike: ["btn", "btn-outline-primary"], 
+                retweet: ["btn", "btn-outline-success"] 
+            }
+
+            const actionBtn = document.createElement("button")
+            actionBtn.textContent = txtInBtn[action]
+   
+            actionBtn.classList.add(...btnClasses[action], "mx-5")
+            actionBtn.id = `${action}-${tweet.id}`
+
+            actionBtn.addEventListener("click", () => handleTweetAction(tweet.id, action))
+            return actionBtn
+        }
+
+        function handleTweetAction(tweet_id, tweetAction){
+            var csrftoken = getCookie('csrftoken');
             const method = "POST"
             const url = "api/tweet/action"
             data = JSON.stringify({
                 id: tweet_id,
-                action: "like"
+                action: tweetAction
             })
 
-            const xhr =  XMLHttpRequest()
+            const xhr = new XMLHttpRequest()
             xhr.open(method, url)
+            xhr.setRequestHeader("Content-Type", "application/json")
             xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
             xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
+            xhr.setRequestHeader("X-CSRFToken", csrftoken)
             
             xhr.send(data)
             xhr.onload = () => {
                 console.log(xhr.status, xhr.response);
+                const tweet = JSON.parse(xhr.response)
+                if (tweetAction === "retweet") {
+                    const actionBtn = document.querySelector(`#retweet-${tweet_id}`)
+                    actionBtn.textContent = tweet.retweets + "retweets" 
+                }
+                else{
+                    console.log(tweet, tweet.likes);
+                    const actionBtn = document.querySelector(`#like-${tweet_id}`);
+                    actionBtn.textContent = tweet.likes + " likes"
+                }
             }
+
+            
 
 
         }

@@ -71,11 +71,14 @@ def delete_tweet_view(request, tweet_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def tweet_action_view(request):
-    serializer = TweetActionSerializer(data=request.POST)
+    print(request.POST)
+    print(request.data)
+    serializer = TweetActionSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serializer = serializer.validated_data
         tweet_id = serializer.get("id")
         action = serializer.get("action")
+        content = serializer.get("content")
 
     qs = Tweet.objects.filter(id=tweet_id)
 
@@ -83,12 +86,19 @@ def tweet_action_view(request):
         return Response({"message": "This tweet does not exist"}, status=404)
 
     obj = qs.first()
+
     if action == "like":
-        obj.likes.remove(request.user)
-    elif action == "unlike":
         obj.likes.add(request.user)
+        serializer = TweetSerializer(obj)
+        return Response(serializer.data, status=200)
+    elif action == "unlike":
+        obj.likes.remove(request.user)
+        serializer = TweetSerializer(obj)
+        return Response(serializer.data, status=200)
     elif action == "retweet":
-        pass
+        parent_tweet = obj
+        retweeted_tweet = Tweets.objects.create(
+            parent=parent_tweet, user=request, content=content)
     return Response({"message": "Tweet liked"}, status=200)
 
 
@@ -110,7 +120,7 @@ def tweets_detail_view_pure_django(request, tweet_id, *args, **kwargs):
     return JsonResponse(data)
 
 
-def create_tweet_view_pure_djangp(request):
+def create_tweet_view_pure_django(request):
     user = request.user
     if not request.user.is_authenticated:
         user = None
