@@ -11,7 +11,7 @@ from rest_framework.authentication import SessionAuthentication
 
 from .models import Tweet
 from .forms import TweetForm
-from .serializers import TweetSerializer
+from .serializers import TweetSerializer, TweetActionSerializer
 
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
@@ -30,8 +30,10 @@ def tweets_list_view(request):
 @api_view(['GET'])
 def tweets_detail_view(request, tweet_id):
     qs = Tweet.objects.filter(id=tweet_id)
-    if qs.exists:
+    if qs.exists():
         obj = qs.first()
+    if not qs.exists():
+        return Response({"message": "This tweet does not exist"}, status=404)
     serializer = TweetSerializer(obj)
     return Response(serializer.data, status=200)
 
@@ -47,6 +49,49 @@ def create_tweet_view(request, *args, **kwargs):
     return Response({}, status=400)
 
 
+@api_view(['DELETE', 'POST'])
+@permission_classes([IsAuthenticated])
+def delete_tweet_view(request, tweet_id):
+    qs = Tweet.objects.filter(id=tweet_id)
+
+    if not qs.exists():
+        return Response({"message": "This tweet does not exist"}, status=404)
+
+    qs = Tweet.objects.filter(user=request.user)
+
+    if not qs.exists:
+        return Response({"message": "Not authorized to delete this tweet"}, status=403)
+
+    if qs.exists():
+        obj = qs.first()
+    obj.delete()
+    return Response({"message": "Tweet deleted"}, status=200)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def tweet_action_view(request):
+    serializer = TweetActionSerializer(data=request.POST)
+    if serializer.is_valid(raise_exception=True):
+        serializer = serializer.validated_data
+        tweet_id = serializer.get("id")
+        action = serializer.get("action")
+
+    qs = Tweet.objects.filter(id=tweet_id)
+
+    if not qs.exists():
+        return Response({"message": "This tweet does not exist"}, status=404)
+
+    obj = qs.first()
+    if action == "like":
+        obj.likes.remove(request.user)
+    elif action == "unlike":
+        obj.likes.add(request.user)
+    elif action == "retweet":
+        pass
+    return Response({"message": "Tweet liked"}, status=200)
+
+
 def tweets_list_view_pure_django(request):
     tweets = Tweet.objects.all()
     tweets_list = [tweet.serialize() for tweet in tweets]
@@ -56,7 +101,7 @@ def tweets_list_view_pure_django(request):
     return JsonResponse(data)
 
 
-def tweets_detail_view(request, tweet_id, *args, **kwargs):
+def tweets_detail_view_pure_django(request, tweet_id, *args, **kwargs):
     data = {
         "id": tweet_id,
     }
