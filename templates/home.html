@@ -145,8 +145,13 @@
             tweetCont.id = `tweet-${tweet.id}`
 
             const h3Elem = document.createElement('h3')
-            h3Elem.textContent = tweet.content
-
+            if (tweet.is_retweet) {
+                h3Elem.textContent = tweet.parent.content
+            } else {
+                h3Elem.textContent = tweet.content
+                
+            }
+            
             const likeBtn = createActionBtn(tweet, "like")
             const unlikeBtn = createActionBtn(tweet, "unlike")
             const retweetBtn = createActionBtn(tweet, "retweet")

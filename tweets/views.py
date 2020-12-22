@@ -57,9 +57,9 @@ def delete_tweet_view(request, tweet_id):
     if not qs.exists():
         return Response({"message": "This tweet does not exist"}, status=404)
 
-    qs = Tweet.objects.filter(user=request.user)
+    qs = qs.filter(user=request.user)
 
-    if not qs.exists:
+    if not qs.exists():
         return Response({"message": "Not authorized to delete this tweet"}, status=403)
 
     if qs.exists():
@@ -100,7 +100,7 @@ def tweet_action_view(request):
         retweeted_tweet = Tweet.objects.create(
             parent=parent_tweet, user=request.user, content=content)
         serializer = TweetSerializer(retweeted_tweet)
-        return Response(serializer.data, status=200)
+        return Response(serializer.data, status=201)
 
 
 def tweets_list_view_pure_django(request):
