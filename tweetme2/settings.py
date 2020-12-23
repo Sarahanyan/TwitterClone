@@ -25,7 +25,7 @@ SECRET_KEY = 'o!8*qm%ww7so@m!$pxy4e1)sd=tp494^wi_^3b07s*6p^0!ch6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 TWEET_MAX_LENGTH = 240
 TWEET_ACTION_OPTIONS = ["like", "unlike", "retweet"]
@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # third party
-    "rest_framework",
+    'rest_framework',
+    'corsheaders',
 
     # internal
     'tweets'
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -128,3 +130,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LOGIN_URL = 'login/'
+
+CORS_ALLOW_ALL_ORIGINS = True  # Any website has access has to my api
+CORS_URLS_REGEX = r'^/api/.*$'
