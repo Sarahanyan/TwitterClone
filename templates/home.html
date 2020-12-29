@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container text-center mt-3" style="background: #ebf5ff;">
+    <div id="tweetme-2">
+    
+    </div>
+
+    <div class="container text-center mt-3 d-none" style="background: #ebf5ff;">
         <form id="tweetform" action="/create-tweet" method="POST" class="p-5 border-bottom">
             {% csrf_token %}
             <div id="createTweetError" class="d-none alert alert-danger"></div>
@@ -9,10 +13,9 @@
             <input type="textarea" name="content" placeholder="write your tweet here"  required="required" class="form-control form-control-lg mb-2">
             <button type="submit" class="btn btn-primary">Tweet</button>
         </form>
-        
-        <div id="tweets">
 
-        </div>  
+        
+        <div id="tweets" class="d-none"></div>  
     </div>
 
     <script>

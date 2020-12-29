@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react"
-import {TweetsList} from "./tweets"
+import {TweetsComponent} from "./tweets"
 import logo from './logo.svg';
 import './App.css';
 
@@ -22,7 +22,7 @@ function App() {
         </a>
       </header>
       <div className="container align-center">
-        <TweetsList />
+        <TweetsComponent />
       </div>
     </div>
   );

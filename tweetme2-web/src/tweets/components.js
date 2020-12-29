@@ -1,17 +1,24 @@
-import React, {useState, useEffect} from "react"
-import {displayTweets} from "../lookup"
+import React, {useState, useEffect, useRef} from "react"
+import {displayTweets, createTweet} from "../lookup"
 
 export const ActionBtn = (props) => {
-  const {singleTweet, action} = props
-  const btnClass = action === "like" ? "btn-primary" : action === "unlike" ? "btn-outline-secondary" : "btn-outline-success"
+  const handleClick = (event) => {
+    event.preventDefault() 
+    userLike ? setLikes(likes - 1) : setLikes(likes + 1)
+    setUserLike(!userLike)
+  }
 
-  const btnText = { like: `${singleTweet.likes} likes`, 
+  const {singleTweet, action} = props
+  const [userLike, setUserLike] = useState(false)
+  const [likes, setLikes] = useState(singleTweet.likes)
+  const btnClass = action === "like" ? "btn-primary" : action === "unlike" ? "btn-outline-secondary" : "btn-outline-success"                                                                   
+  const btnText = { like: `${likes} likes`, 
                     unlike: "unlike", 
                     retweet: "retweet"
                   }
 
   return(
-    <button className={`btn ${btnClass} mx-1`}>
+    <button className={`btn ${btnClass} mx-1`} onClick={handleClick}>
       {btnText[action]}
     </button>
   )
@@ -20,7 +27,7 @@ export const ActionBtn = (props) => {
 export const Tweet = (props) => {
   const {content, likes} = props.singleTweet
   return (
-    <div className="col-md-6 col-10 py-5 my-3 border-bottom">
+    <div className="col-10 py-5 my-3 border-bottom">
       <h3>{content}</h3>
       <div className="btn btn-group">
         <ActionBtn singleTweet= {props.singleTweet} action="like" />
@@ -31,8 +38,13 @@ export const Tweet = (props) => {
   )
 }
 
-export function TweetsList() {
+export function TweetsList(props) {
   const [tweets, setTweets] = useState([])
+  const createdTweet = props.createdTweet
+
+  useEffect(() => {
+    setTweets([createdTweet, ...tweets])
+  }, [createdTweet])
 
   useEffect(() => {
     const setTweetsCallback = (response, status) => {
@@ -62,4 +74,34 @@ export function TweetsList() {
       </div>
 
   );
+}
+
+export const TweetsComponent = (props) => {
+  const textareaRef = useRef()
+  const [createdTweet, setCreatedTweet] = useState({})
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    const newVal = textareaRef.current.value
+    console.log(newVal);
+
+    const createTweetCallback = (response, status) => {
+      if (status === 201){
+        setCreatedTweet(response)
+      }
+    }
+    createTweet(createTweetCallback, newVal)
+    textareaRef.current.value = ""
+    
+  }
+  return (
+    <div className="col-12 my-4">
+      <form onSubmit={handleSubmit}>
+          <textarea ref={textareaRef} required={true} className="form-control" />
+          <button type="submit" className="btn btn-primary mt-2">Tweet</button>
+      </form>
+      <TweetsList createdTweet={createdTweet}/>
+    </div>
+      
+    )
 }
