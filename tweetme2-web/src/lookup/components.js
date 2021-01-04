@@ -15,14 +15,14 @@ function getCookie(name) {
             }
 
 export  function 
-lookup(method, endpoint, 
+backendLookup(method, endpoint, 
   callback, data) {
     let jsonData = {}
     if (data){
       jsonData = JSON.stringify(data)
     }
-    console.log("data: ", data);
-    console.log("jsonData: ", jsonData);
+    // console.log("data: ", data);
+    // console.log("jsonData: ", jsonData);
 
     var csrftoken = getCookie('csrftoken');
 
@@ -48,11 +48,3 @@ lookup(method, endpoint,
     }
     xhr.send(jsonData)
 }
-
-export function displayTweets(callback){
-  lookup('GET', "/tweets/", callback)   
-        }
-
-export function createTweet(callback, tweetValue){
-  lookup('POST', "/tweets/create/", callback, {content: tweetValue})   
-        }
