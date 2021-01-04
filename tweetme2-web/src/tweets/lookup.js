@@ -1,7 +1,11 @@
 import {backendLookup} from "../lookup"
 
-export function apiTweetsList(callback){
-  backendLookup('GET', "/tweets/", callback)   
+export function apiTweetsList(username, callback){
+  let endpoint = "/tweets/"
+  if (username) {
+    endpoint = `/tweets/?username=${username}`
+  }
+  backendLookup('GET', endpoint, callback)   
         }
 
 export function apiTweetCreate(callback, tweetValue){
