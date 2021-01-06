@@ -34,7 +34,10 @@
 
     <!-- <div id="root"></div> -->
     <!-- <div id="tweetme-2" data-username="bella" data-can-tweet="false"></div> -->
+
     <div id="tweetme-2"></div>
+
+    <div id="tweet-container"></div>
     
     <!--
       This HTML file is a template.
@@ -48,6 +51,24 @@
     -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
+    <script>
+      const path = window.location.pathname
+      const idRegex = /(?<tweetId>\d+)/
+      const match = path.match(idRegex)
+      console.log(match);
+      
+      if (match) {
+        const tweetId = match.groups.tweetId
+        const tweetme2El = document.getElementById("tweetme-2")
+        tweetme2El.classList.add("d-none")
+        const tweetDetailEl = document.createElement("div")
+        tweetDetailEl.classList.add("tweetme-2-detail")
+        tweetDetailEl.setAttribute("data-tweet-id", `${tweetId}`)
+        const tweetDetailCont = document.getElementById("tweet-container")
+        tweetDetailCont.append(tweetDetailEl)    
+      }
+    </script>
 
   </body>
 </html>

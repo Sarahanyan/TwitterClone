@@ -34,12 +34,18 @@ backendLookup(method, endpoint,
     xhr.open(method, url)
     xhr.setRequestHeader("Content-Type", "application/json")
     if (csrftoken) {
-      xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
+      // xhr.setRequestHeader("HTTP_X_REQUESTED_WITH", "XMLHttpRequest")
       xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
       xhr.setRequestHeader("X-CSRFToken", csrftoken)
     }
     
     xhr.onload = () => {
+      if (xhr.status === 403) {
+        const detail = xhr.response.detail
+        if (detail === "Authentication credentials were not provided.") {
+          window.location.href = "/login/?showLoginRequired=true"
+        }
+      }
       callback(xhr.response, xhr.status)
     }
 
