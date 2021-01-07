@@ -31,6 +31,10 @@ class TweetTestCase(TestCase):
         self.assertEqual(tweet.user, self.user)
         self.assertEqual(tweet.id, 5)
 
+    def test_tweet_related_name(self):
+        user = self.user
+        self.assertEqual(user.tweets.count(), 2)
+
     def get_client(self):
         client = APIClient()
         client.login(username=self.user.username, password="rose")
@@ -49,6 +53,11 @@ class TweetTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         like_count = response.json().get("likes")
         self.assertEqual(like_count, 1)
+
+        my_like_instances_count = self.user.tweetlike_set.count()
+        self.assertEqual(my_like_instances_count, 1)
+        my_related_likes = self.user.user_likes.count()
+        self.assertEqual(my_like_instances_count, my_related_likes)
 
     def test_action_unlike(self):
         client = self.get_client()
