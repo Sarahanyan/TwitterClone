@@ -31,8 +31,3 @@ def tweets_list_view(request):
 def tweets_detail_view(request, tweet_id, *args, **kwargs):
     context = {"tweet_id": tweet_id}
     return render(request, "tweets/detail.html", context)
-
-
-def tweets_profile_view(request, username, *args, **kwargs):
-    context = {"profile_username": username}
-    return render(request, "tweets/profile.html", context)

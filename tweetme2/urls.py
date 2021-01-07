@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, re_path, include
 from django.views.generic import TemplateView
 
 from accounts.views import (
@@ -28,7 +28,7 @@ from tweets.views import (
     home_view,
     tweets_list_view,
     tweets_detail_view,
-    tweets_profile_view)
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -38,7 +38,7 @@ urlpatterns = [
     path("logout/", logout_view),
     path("register/", register_view),
     path("<int:tweet_id>", tweets_detail_view),
-    path("profile/<str:username>", tweets_profile_view),
+    re_path(r"profiles?/", include("profiles.urls")),
     path("react/", TemplateView.as_view(template_name="react_via_dj.html")),
 
     path("api/tweets/", include("tweets.api.urls"))
