@@ -7,6 +7,7 @@ from random import randint
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.authentication import SessionAuthentication
 
 from ..models import Tweet
@@ -16,13 +17,20 @@ from ..serializers import TweetCreateSerializer, TweetSerializer, TweetActionSer
 ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 
+def get_paginated_queryset_response(qs, request):
+    paginator = PageNumberPagination()
+    paginator.page_size = 20
+    paginated_qs = paginator.paginate_queryset(qs, request)
+    serializer = TweetSerializer(paginated_qs, many=True)
+    return paginator.get_paginated_response(serializer.data)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def tweets_feed_view(request):
     user = request.user
-    qs = Tweet.objects.feed()
-    serializer = TweetSerializer(qs, many=True)
-    return Response(serializer, status=200)
+    qs = Tweet.objects.feed(user)
+    return get_paginated_queryset_response(qs, request)
 
 
 @api_view(['GET'])
@@ -31,8 +39,7 @@ def tweets_list_view(request):
     username = request.GET.get('username')
     if username != None:
         qs = qs.filter(user__username__iexact=username)
-    serializer = TweetSerializer(qs, many=True)
-    return Response(serializer.data, status=200)
+    return get_paginated_queryset_response(qs, request)
 
 
 @api_view(['GET'])
