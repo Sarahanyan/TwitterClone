@@ -32,7 +32,7 @@ export const Tweet = (props) => {
 
   return (
     <div className={tweetClass}>
-      <h3>{content}</h3>
+      <h3>{id} - {content}</h3>
       {
         parentTweet && 
         <div>

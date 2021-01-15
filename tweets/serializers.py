@@ -20,7 +20,7 @@ class TweetActionSerializer(serializers.Serializer):
 
 
 class TweetCreateSerializer(serializers.ModelSerializer):
-    user = serializers.SerializerMethodField(
+    user = PublicProfileSerializer(
         source="user.profile", read_only=True)
     likes = serializers.SerializerMethodField(read_only=True)
 

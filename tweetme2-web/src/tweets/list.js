@@ -4,6 +4,7 @@ import {Tweet} from "./detail"
 
 export function TweetsList(props) {
   const [tweets, setTweets] = useState([])
+  const [nextUrl, setNextUrl] = useState(null)
   const createdTweet = props.createdTweet
   let retweetedTweet
   
@@ -14,11 +15,11 @@ export function TweetsList(props) {
   useEffect(() => {
     const setTweetsCallback = (response, status) => {
       if (status === 200){
-        setTweets(response)
+        setTweets(response.results)
         if (!tweets) {
           setTweets([{id: 1, content: "hey"}, {id: 2, content: "heysup"}, {id: 3, content: "sup"}])      
         }
-        
+        setNextUrl(response.next)
       }
     }
     apiTweetsList(props.username, setTweetsCallback)
@@ -28,6 +29,18 @@ export function TweetsList(props) {
   const didRetweet = (actionTweet) => {
     retweetedTweet = actionTweet
     setTweets([retweetedTweet, ...tweets])
+  }
+
+  const handleLoadNext = (event) => {
+    event.preventDefault()
+      const handleLoadNextResponse = (response, status) => {
+          if (status === 200){
+            setTweets([...tweets, ...response.results])
+            setNextUrl(response.next)
+        }
+      }
+        apiTweetsList(props.username, handleLoadNextResponse, nextUrl)
+
   }
 
   return (
@@ -42,6 +55,11 @@ export function TweetsList(props) {
             )
           })
           }
+          {nextUrl !== null && 
+          <button className="btn btn-success float-end" onClick={handleLoadNext}>
+            More Tweets  >>> 
+            </button>
+            }
       </div>
 
   );
