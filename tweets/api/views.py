@@ -17,6 +17,15 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def tweets_feed_view(request):
+    user = request.user
+    qs = Tweet.objects.feed()
+    serializer = TweetSerializer(qs, many=True)
+    return Response(serializer, status=200)
+
+
+@api_view(['GET'])
 def tweets_list_view(request):
     qs = Tweet.objects.all()
     username = request.GET.get('username')
