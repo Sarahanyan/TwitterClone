@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {TweetsComponent, TweetDetailComponent, FeedComponent} from './tweets'
+import {ProfileBadgeComponent} from "./profile"
 
 const appEl = document.getElementById('root')
 
@@ -33,10 +34,16 @@ if (tweetsEl) {
 ); 
 }
 
-const tweetsDetailElements =   document.querySelectorAll('.tweetme-2-detail')
+const tweetsDetailElements = document.querySelectorAll('.tweetme-2-detail')
 tweetsDetailElements.forEach((container) => {
   ReactDOM.render(
   createEl(TweetDetailComponent, container.dataset), container)
+})
+
+const profileDetailElements = document.querySelectorAll('.tweetme-2-profile-detail')
+profileDetailElements.forEach((container) => {
+  ReactDOM.render(
+  createEl(ProfileBadgeComponent, container.dataset), container)
 })
 
 

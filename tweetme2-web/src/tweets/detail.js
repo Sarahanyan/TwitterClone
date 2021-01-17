@@ -9,6 +9,8 @@ export const Tweet = (props) => {
   const tweetClass = "col-10 py-5 my-3 border-bottom"
   const[singleTweet, setSingleTweet] = useState(props.singleTweet)
   const isDetailView = checkIfDetailView(singleTweet)
+  const profPicstyle = {fontSize: "2.2rem", backgroundColor: "#245280"}
+  const profPicClasses = "px-4 py-3 rounded-circle text-white"
 
   function checkIfDetailView(tweet){
     const path = window.location.pathname
@@ -34,7 +36,7 @@ export const Tweet = (props) => {
   return (
     <div className={tweetClass}>
       <div className="d-flex mb-2">
-        <UserPicture user={user} />
+        <UserPicture user={user} stylings={profPicstyle} classes={profPicClasses}/>
         <p className="mx-3">
           <UserDisplay user={user} includeFullName/>
         </p>
@@ -62,13 +64,16 @@ const ParentTweet = (props) => {
   const {checkIfDetailView, handleLink} = props
   const {content, user} = props.tweet
   const isDetailView = checkIfDetailView(props.tweet)
+  const profPicstyle = {fontSize: "2.2rem", backgroundColor: "#245280"}
+  const profPicClasses = "px-4 py-3 rounded-circle text-white"
+
   // console.log(props.tweet.id, (user.first_name) ? user.first_name : "null");
 
   return (
     <div className="col-9 mx-auto border rounded py-1 px-2 mb-2" style={{"background": "#e8eef4"}}>
       <p className="mb-2 text-muted small">Retweet</p>
       <div className="d-flex mt-4 pointer">
-          <UserPicture user={user} />
+          <UserPicture user={user} stylings={profPicstyle} classes={profPicClasses}/>
           <p className="mx-3">
             <UserDisplay user={user} includeFullName/>
           </p>

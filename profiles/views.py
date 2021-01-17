@@ -40,7 +40,5 @@ def tweets_profile_view(request, username, *args, **kwargs):
         raise Http404
 
     profile_obj = qs.first()
-    context = {
-        "profile_username": username,
-        "profile": profile_obj}
+    context = {"profile_username": username}
     return render(request, "profiles/detail.html", context)
