@@ -1,9 +1,26 @@
 import React, {useState, useEffect, useRef} from "react"
 import {TweetCreate} from "./create"
 import {TweetsList} from "./list"
+import {TweetsFeedList} from "./feed"
 import {Tweet} from "./detail"
 import {apiTweetDetail} from "./lookup"
 
+export const FeedComponent = (props) => {
+  const canTweet = props.canTweet === "false" ? false : true
+  const [createdTweet, setCreatedTweet] = useState({})
+
+  const handleTweet = (newTweet) => {
+    setCreatedTweet(newTweet)
+  }
+
+  return (
+    <div className="col-12 my-4">
+      {canTweet && <TweetCreate didTweet={handleTweet}/>}
+      <TweetsFeedList createdTweet={createdTweet} {...props}/>
+    </div>
+      
+    )
+}
 
 export const TweetsComponent = (props) => {
   const canTweet = props.canTweet === "false" ? false : true

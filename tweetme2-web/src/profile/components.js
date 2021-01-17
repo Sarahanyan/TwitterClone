@@ -3,7 +3,6 @@ import React from "react"
 
 export const UserPicture = (props) => {
   const {user, stylings} = props
-  console.log((user) ? user.first_name : "null");
 
   return(
     <UserLink>

@@ -17,11 +17,7 @@ ALLOWED_HOSTS = settings.ALLOWED_HOSTS
 
 
 def home_view(request):
-    username = None
-    if request.user.is_authenticated:
-        username = request.user.username
-    context = {"profile_username": username}
-    return render(request, "home.html", context)
+    return render(request, "feed.html")
 
 
 def tweets_list_view(request):

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {TweetsComponent, TweetDetailComponent} from './tweets'
+import {TweetsComponent, TweetDetailComponent, FeedComponent} from './tweets'
 
 const appEl = document.getElementById('root')
 
@@ -16,8 +16,16 @@ if (appEl) {
 ); 
 }
 
-const tweetsEl =   document.getElementById('tweetme-2')
+const tweetsFeedEl =   document.getElementById('tweetme-2-feed')
 const createEl = React.createElement
+
+if (tweetsFeedEl) {
+  ReactDOM.render(
+  createEl(FeedComponent, tweetsFeedEl.dataset), tweetsFeedEl
+); 
+}
+
+const tweetsEl = document.getElementById('tweetme-2')
 
 if (tweetsEl) {
   ReactDOM.render(
