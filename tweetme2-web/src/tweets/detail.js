@@ -1,8 +1,9 @@
-import React, {useState} from "react"
+import React, {useReducer, useState} from "react"
 import {ActionBtn} from "./buttons"
+import {UserDisplay, UserPicture} from "../profile"
 
 export const Tweet = (props) => {
-  let {content, likes, id} = props.singleTweet
+  let {content, likes, id, user} = props.singleTweet
   const handleDidRetweet = props.handleDidRetweet
   const parentTweet = props.singleTweet.parent
   const tweetClass = "col-10 py-5 my-3 border-bottom"
@@ -32,7 +33,13 @@ export const Tweet = (props) => {
 
   return (
     <div className={tweetClass}>
-      <h3>{id} - {content}</h3>
+      <div className="d-flex mb-2">
+        <UserPicture user={user} />
+        <p className="mx-3">
+          <UserDisplay user={user} includeFullName/>
+        </p>
+      </div>
+      {content && <h3 className="mx-5">{content}</h3>}
       {
         parentTweet && 
         <div>
@@ -53,12 +60,19 @@ export const Tweet = (props) => {
 
 const ParentTweet = (props) => {
   const {checkIfDetailView, handleLink} = props
-  const {content} = props.tweet
+  const {content, user} = props.tweet
   const isDetailView = checkIfDetailView(props.tweet)
+  // console.log(props.tweet.id, (user.first_name) ? user.first_name : "null");
 
   return (
-    <div className="col-9 mx-auto border rounded py-1 mb-2" style={{"background": "#e8eef4"}}>
-      <p className="mb-0 text-muted small">Retweet</p>
+    <div className="col-9 mx-auto border rounded py-1 px-2 mb-2" style={{"background": "#e8eef4"}}>
+      <p className="mb-2 text-muted small">Retweet</p>
+      <div className="d-flex mt-4 pointer">
+          <UserPicture user={user} />
+          <p className="mx-3">
+            <UserDisplay user={user} includeFullName/>
+          </p>
+      </div>
       <h3>{content}</h3>
       {
         (!isDetailView) && <button className="btn btn-link" onClick={handleLink}>View</button>
