@@ -22,7 +22,7 @@ export const TweetCreate = (props) => {
     
   }
   return (
-    <div className="col-12 my-4">
+    <div className="container my-4">
         <form onSubmit={handleSubmit}>
           <textarea ref={textareaRef} required={true} className="form-control" />
           <button type="submit" className="btn btn-primary mt-2">Tweet</button>

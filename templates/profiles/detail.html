@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <div class="tweetme-2-profile-detail" data-username="{{profile_username}}"></div>
+
     <div 
         id="tweetme-2" 
-        data-username={{profile_username}} 
+        data-username="{{profile_username}}" 
         data-can-tweet="false"
     >
     </div>

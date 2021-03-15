@@ -33,8 +33,7 @@ export const UserDisplay = (props) => {
   return(
     <>
       {nameDisplay} <br/>
-      {user && 
-        hideLink ? `@${user.username}` : <UserLink username={user.username}>@{user.username}</UserLink>
+      {user ? hideLink ? `@${user.username}` : <UserLink username={user.username}>@{user.username}</UserLink> : null
       }
     </>
   )
